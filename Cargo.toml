@@ -1,0 +1,10 @@
+[package]
+name = "gmc-logger"
+version = "0.1.0"
+authors = ["j_dickert <jdickert@uwaterloo.ca>"]
+edition = "2018"
+
+[dependencies]
+clap = "2.33.0"
+serialport = "3.3.0"
+ureq = { version = "*", features = [] }
