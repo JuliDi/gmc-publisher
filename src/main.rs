@@ -6,7 +6,18 @@ use clap::{App, AppSettings, Arg};
 use serialport::prelude::*;
 use std::{thread, time::Duration};
 
+// Default settings for serial communication to GMC 320 V4
+const SETTINGS: SerialPortSettings = SerialPortSettings {
+    baud_rate: 115200,
+    data_bits: DataBits::Eight,
+    flow_control: FlowControl::None,
+    parity: Parity::None,
+    stop_bits: StopBits::One,
+    timeout: Duration::from_millis(50),
+};
+
 fn main() {
+    // Get commandline parameters
     let matches = App::new("GMC Logger")
         .about("Reads the current CPM from the GMC's serial port and publishes it to gmcmap.com")
         .setting(AppSettings::DisableVersion)
@@ -24,7 +35,7 @@ fn main() {
                 .short("a")
                 .long("aid")
                 .value_name("AID")
-                .help("The gmcmap.com user account ID")
+                .help("The gmcmap.com user account ID, e. g. 12345")
                 .takes_value(true)
                 .required(true),
         )
@@ -33,7 +44,7 @@ fn main() {
                 .short("g")
                 .long("gid")
                 .value_name("GID")
-                .help("The gmcmap.com Geiger Counter ID")
+                .help("The gmcmap.com Geiger Counter ID, e. g. 12345678901")
                 .takes_value(true)
                 .required(true),
         )
@@ -43,17 +54,8 @@ fn main() {
     let port_name = matches.value_of("port").unwrap();
     let aid = matches.value_of("AID").unwrap();
     let gid = matches.value_of("GID").unwrap();
-    // Configure serial port (for GMC 320 V4 and others)
-    let settings = SerialPortSettings {
-        baud_rate: 115200,
-        data_bits: DataBits::Eight,
-        flow_control: FlowControl::None,
-        parity: Parity::None,
-        stop_bits: StopBits::One,
-        timeout: Duration::from_millis(50),
-    };
 
-    match serialport::open_with_settings(&port_name, &settings) {
+    match serialport::open_with_settings(&port_name, &SETTINGS) {
         Ok(mut port) => {
             let mut serial_buf: Vec<u8> = vec![0; 1000];
 
@@ -136,7 +138,7 @@ fn main() {
             // Check whether gmcmap.com returned OK.ERR0 or an error
             match resp.into_string() {
                 Ok(t) if t.contains("OK.ERR0") => Ok(()),
-                Ok(t) => Err(format!("gmcmap.com returned errorcode {}", t)),
+                Ok(t) => Err(format!("gmcmap.com returned errorcode '{}'", t)),
                 Err(e) => panic!("Response.into_string() failed with error: {}", e),
             }
         } else {
