@@ -41,4 +41,4 @@ Example: `gmc-logger --port=/dev/ttyUSB0 --aid=12345 --gid=1234567890`
 Check out [gq-gmc-control](https://github.com/chaim-zax/gq-gmc-control). It's a "Control tool for the GQ GMC Geiger Counters." written in Python.
 
 ## License
-See [LICENSE](./LICENSE.md)
+See [LICENSE](./LICENSE)
