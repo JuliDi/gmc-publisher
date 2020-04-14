@@ -1,4 +1,4 @@
-# gmc-logger
+# gmc-publisher
 A minimal application for uploading the Geiger Counter's current CPM values to gmcmap.com written in Rust.
 
 ## Features
