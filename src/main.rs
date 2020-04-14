@@ -121,33 +121,32 @@ fn main() {
             panic!("Failed to open port {}. Error: {}", port_name, e);
         }
     }
+}
+fn publish_result(aid: &str, gid: &str, cpm: &u16, usvph: &f32) -> Result<(), String> {
+    // Compose the URL for the GET request
+    let request_url = format!(
+        "http://www.GMCmap.com/log2.asp?AID={}&GID={}&CPM={}&uSV={}",
+        aid, gid, cpm, usvph
+    );
 
-    fn publish_result(aid: &str, gid: &str, cpm: &u16, usvph: &f32) -> Result<(), String> {
-        // Compose the URL for the GET request
-        let request_url = format!(
-            "http://www.GMCmap.com/log2.asp?AID={}&GID={}&CPM={}&uSV={}",
-            aid, gid, cpm, usvph
-        );
-
-        // Perform the get request with timeouts
-        let resp = ureq::get(&request_url.as_str())
-            .timeout_connect(10_000)
-            .timeout_read(2_000)
-            .call();
-        if resp.ok() {
-            // Check whether gmcmap.com returned OK.ERR0 or an error
-            match resp.into_string() {
-                Ok(t) if t.contains("OK.ERR0") => Ok(()),
-                Ok(t) => Err(format!("gmcmap.com returned errorcode '{}'", t)),
-                Err(e) => panic!("Response.into_string() failed with error: {}", e),
-            }
-        } else {
-            // Handle other errors, e.g. missing internet connection
-            Err(format!(
-                "http request failed, response stauts: {} - {}",
-                resp.status(),
-                resp.status_text()
-            ))
+    // Perform the get request with timeouts
+    let resp = ureq::get(&request_url.as_str())
+        .timeout_connect(10_000)
+        .timeout_read(2_000)
+        .call();
+    if resp.ok() {
+        // Check whether gmcmap.com returned OK.ERR0 or an error
+        match resp.into_string() {
+            Ok(t) if t.contains("OK.ERR0") => Ok(()),
+            Ok(t) => Err(format!("gmcmap.com returned errorcode '{}'", t)),
+            Err(e) => panic!("Response.into_string() failed with error: {}", e),
         }
+    } else {
+        // Handle other errors, e.g. missing internet connection
+        Err(format!(
+            "http request failed, response stauts: {} - {}",
+            resp.status(),
+            resp.status_text()
+        ))
     }
 }
