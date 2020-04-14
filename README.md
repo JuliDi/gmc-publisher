@@ -1,5 +1,5 @@
 # gmc-logger
-A minimal application for uploading the Geiger Counter's current CPM values to gmcmap.com.
+A minimal application for uploading the Geiger Counter's current CPM values to gmcmap.com written in Rust.
 
 ## Features
 * Only specify port, user ID and Geiger Counter ID – and you are good to go
@@ -37,8 +37,8 @@ OPTIONS:
 
 Example: `gmc-logger --port=/dev/ttyUSB0 --aid=12345 --gid=1234567890`
 
-### References
+## References
 Check out [gq-gmc-control](https://github.com/chaim-zax/gq-gmc-control). It's a "Control tool for the GQ GMC Geiger Counters." written in Python.
 
-### License
+## License
 See [LICENSE](./LICENSE.md)
